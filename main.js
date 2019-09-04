@@ -114,7 +114,7 @@ build = (data, res) => {
     let script = generate_script(data);
     script += 'builder.SaveFile("docx", "' + __dirname + '/public/' + filename + '");\n' + 'builder.CloseFile();';
     fs.writeFile('public/' + filename + 'js', script, () => {
-        exec('sudo documentbuilder ' + 'public/' + filename + 'js', () => { res.send({'filename': filename }); });
+        exec('documentbuilder ' + 'public/' + filename + 'js', () => { res.send({'filename': filename }); });
     });
 };
 
