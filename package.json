@@ -1,5 +1,5 @@
 {
-  "name": "builder-example",
+  "name": "documentbuilder-integration-example-nodejs",
   "version": "1.0.0",
   "dependencies": {
     "express": "latest",
