@@ -1,0 +1,116 @@
+<html>
+<body>
+<div class="fill-name">
+    <input type="text" id="fill-name" placeholder="full name">
+</div>
+
+<div class="phone-number">
+    <input type="number" id="phone-number" placeholder="phone number">
+</div>
+
+<div class="email">
+    <input type="text" id="email" placeholder="email">
+</div>
+
+<div class="country">
+    <input type="text" id="country" placeholder="country">
+</div>
+
+<div class="city">
+    <input type="text" id="city" placeholder="city">
+</div>
+
+<div class="profile">
+    <textarea id="profile" placeholder="Insert a brief description of yourself"></textarea>
+</div>
+
+<div class="education">
+    <input type="text" id="degree" placeholder="degree">
+    <input type="text" id="university" placeholder="university">
+    <input type="text" id="location" placeholder="location">
+    <input type="number" id="year" placeholder="year">
+</div>
+
+<div class="skills">
+    <div class="skill">
+        <input type="text" id="new-skill" placeholder="skill" onkeyup="add_skill_by_enter(event)">
+        <button onclick="add_skill()">+</button>
+    </div>
+</div>
+
+<button onclick="sendForm()">Send</button>
+</body>
+</html>
+
+<script>
+
+    add_skill = () => {
+        const newSkill = document.getElementById("new-skill");
+        if (newSkill.value === '') {
+            return;
+        }
+        const div = document.createElement("div");
+        const span = document.createElement("span");
+        const button = document.createElement("button");
+        span.classList.add("skillfield");
+        span.innerText += newSkill.value;
+        newSkill.value = '';
+        newSkill.focus();
+        button.innerText += "-";
+        button.onclick = () => {
+            div.remove();
+        };
+        div.appendChild(span);
+        div.appendChild(button);
+        document.getElementsByClassName('skills')[0].appendChild(div);
+    };
+
+    add_skill_by_enter = (event) => {
+        if (event.code === "Enter") {
+            add_skill();
+        }
+    };
+
+    get_skill_values = () => {
+        const skills = [];
+        if (document.getElementById('new-skill').value !== '') {
+            skills.push(document.getElementById('new-skill').value);
+        }
+        Array.from(document.getElementsByClassName('skillfield')).forEach(current_element => {
+            skills.push(current_element.innerHTML);
+        });
+        return skills;
+    };
+
+    sendForm = () => {
+        fetch('/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userData: {
+                    fillName: document.getElementById('fill-name').value,
+                    phoneNumber: document.getElementById('phone-number').value,
+                    email: document.getElementById('email').value,
+                    profile: document.getElementById('profile').value,
+                    country: document.getElementById('country').value,
+                    city: document.getElementById('city').value,
+                    education: {
+                        degree: document.getElementById('degree').value,
+                        university: document.getElementById('university').value,
+                        location: document.getElementById('location').value,
+                        year: document.getElementById('year').value,
+                    },
+                    skills: get_skill_values()
+                }
+            })
+        }).then(res => res.json())
+            .then(response => {
+                location.replace('/' + response.filename);
+                console.log(response.filename)
+
+            })
+            .catch(error => console.error('Error:', error));
+    };
+</script>
